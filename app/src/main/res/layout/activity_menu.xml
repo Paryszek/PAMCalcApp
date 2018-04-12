@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.parys.calc.Calculator">
+
+        <android.support.v7.widget.GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:columnCount="1"
+            app:rowCount="4">
+
+            <Button
+                android:id="@+id/simple"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="Simple"
+                app:layout_column="0"
+                app:layout_row="0" />
+            <Button
+                android:id="@+id/advenced"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="Advenced"
+                app:layout_column="0"
+                app:layout_row="1" />
+            <Button
+                android:id="@+id/about"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="About"
+                app:layout_column="0"
+                app:layout_row="2" />
+            <Button
+                android:id="@+id/exit"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="Exit"
+                app:layout_column="0"
+                app:layout_row="3" />
+        </android.support.v7.widget.GridLayout>
+
+    </LinearLayout>
