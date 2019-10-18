@@ -12,7 +12,7 @@ public class CalcValidator {
         String  L = "((" + C + ")|(\\(([\\-])?" + C + "\\)))";
         String W = "((\\(" + L + "(" + O + L + "+" + ")*\\))|" + L + ")";
         String A = "(" + W + "(" + O + W + "+" + ")*)";
-        calcPattern = Pattern.compile(String.format("^(%s;(%s;)*)$", A, A));
+        calcPattern = Pattern.compile(String.format("^(%s(%s)*)$", A, A));
     }
 
     public boolean Validate(String value) {

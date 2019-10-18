@@ -28,22 +28,12 @@ public class ACalculator extends AppCompatActivity {
     }
     @OnClick(R.id.bksp)
     public void OnBkspClick() {
-        if(display.endsWith(".")) {
-            dotError = false;
-        }
-        if (display.length() == 0) {
-            zeroError = false;
-        } else {
-            display = display.substring(0, display.length() - 1);
-        }
-
+        display = display.substring(0, display.length() - 1);
         updateTextView(display);
     }
 
     @OnClick(R.id.c)
     public void onCClick() {
-        dotError = false;
-        zeroError = false;
         display = "";
         updateTextView(display);
     }
@@ -497,18 +487,22 @@ public class ACalculator extends AppCompatActivity {
 
     @OnClick(R.id.equal)
     public void onEqualClick() {
+        CalcValidator calcValidator = new CalcValidator();
         ReversePolishNotation rpn = new ReversePolishNotation();
-        if (!display.contains("Dzielenie przez zero!") && !zeroError && display.length() != 0 && !display.startsWith("+")) {
-            if (!doesTextEndsWithOperator(display) && !display.contains("^")) {
-                display = rpn.compute(display);
-                dotError = true;
-                if (display.contains("Infinity")) {
-                    display = "Dzielenie przez zero!";
-                    zeroError = true;
-                }
-                updateTextView(display);
-            }
+//        if (!display.contains("Dzielenie przez zero!") && !zeroError && display.length() != 0 && !display.startsWith("+")) {
+//            if (!doesTextEndsWithOperator(display) && !display.contains("^")) {
+
+        if (!calcValidator.Validate(display)) return;
+
+        display = rpn.compute(display);
+        dotError = true;
+        if (display.contains("Infinity")) {
+            display = "Dzielenie przez zero!";
+            zeroError = true;
         }
+        updateTextView(display);
+//            }
+//        }
     }
 
     boolean doesTextEndsWithOperator(String text) {
