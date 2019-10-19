@@ -59,33 +59,31 @@ public class ACalculator extends AppCompatActivity {
 
     @OnClick(R.id.xy)
     public void onXYClick() {
-        if (!display.contains("^")) {
-            fillTheList("^", "operator");
-        } else if (display.contains("^") && display.length() > 1) {
-            display = removeBrackets(display);
-            String power = getPower(display);
-            String numberBeforePower = getNumber(display);
-            String number = display;
-            int lengthOfPower = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfPower++;
-            } while (!number.endsWith("^"));
-            int lengthOfNumber = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumber++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")));
-            Double nbr = Math.pow(Double.parseDouble(numberBeforePower), Double.parseDouble(power));
-            if (isNegative && isBrackets) {
-                display = display.substring(0, display.length() - lengthOfPower - lengthOfNumber - 2);
-                display += nbr.toString();
-            } else {
-                display = display.substring(0, display.length() - lengthOfPower - lengthOfNumber);
-                display += nbr.toString();
-            }
-            updateTextView(display);
-        }
+        if (display.length() < 1) return;
+        fillTheList("^", "operator");
+        updateTextView(display);
+//        display = removeBrackets(display);
+//        String power = getPower(display);
+//        String numberBeforePower = getNumber(display);
+//        String number = display;
+//        int lengthOfPower = 0;
+//        do {
+//            number = number.substring(0, number.length() - 1);
+//            lengthOfPower++;
+//        } while (!number.endsWith("^"));
+//        int lengthOfNumber = 0;
+//        do {
+//            number = number.substring(0, number.length() - 1);
+//            lengthOfNumber++;
+//        } while ((!doesTextEndsWithOperator(number) && !number.equals("")));
+//        Double nbr = Math.pow(Double.parseDouble(numberBeforePower), Double.parseDouble(power));
+//        if (isNegative && isBrackets) {
+//            display = display.substring(0, display.length() - lengthOfPower - lengthOfNumber - 2);
+//            display += nbr.toString();
+//        } else {
+//            display = display.substring(0, display.length() - lengthOfPower - lengthOfNumber);
+//            display += nbr.toString();
+//        }
     }
 
     private String getNumber(String diss) {
@@ -489,8 +487,11 @@ public class ACalculator extends AppCompatActivity {
     public void onEqualClick() {
         CalcValidator calcValidator = new CalcValidator();
         ReversePolishNotation rpn = new ReversePolishNotation();
+
 //        if (!display.contains("Dzielenie przez zero!") && !zeroError && display.length() != 0 && !display.startsWith("+")) {
 //            if (!doesTextEndsWithOperator(display) && !display.contains("^")) {
+
+//        if (display.contains("^")) return;
 
         if (!calcValidator.Validate(display)) return;
 

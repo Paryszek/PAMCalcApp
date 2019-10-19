@@ -47,6 +47,7 @@ public class ReversePolishNotation {
                         }
                         break;
                     case '*':
+                    case '^':
                     case '/':
                         if (operator.peek() == '(')
                             operator.push(op);
@@ -69,7 +70,7 @@ public class ReversePolishNotation {
     }
 
     private boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')';
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c =='^';
     }
 
     private boolean isNum(char c, char p) {

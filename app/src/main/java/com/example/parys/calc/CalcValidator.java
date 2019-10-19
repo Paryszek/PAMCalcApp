@@ -16,7 +16,7 @@ public class CalcValidator {
     }
 
     public boolean Validate(String value) {
-        Matcher calcMatcher = calcPattern.matcher(value);
+        Matcher calcMatcher = calcPattern.matcher(value.toLowerCase());
         return calcMatcher.matches();
     }
 
