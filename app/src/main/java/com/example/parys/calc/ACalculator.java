@@ -159,18 +159,7 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.tan)
     public void onTanClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display)) {
-            String newDisplay = removeBrackets(display);
-            String number = newDisplay;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = newDisplay.substring(newDisplay.length() - lengthOfNumbers);
-            Double nbr = Math.tan(Double.parseDouble(number));
-            number = nbr.toString();
-            newDisplay = newDisplay.substring(0, newDisplay.length() - lengthOfNumbers);
-            newDisplay += number;
+            String newDisplay = executeMathFunctionOnValue(display, Math::tan);
             updateTextView(newDisplay);
         }
     }
@@ -188,8 +177,12 @@ public class ACalculator extends AppCompatActivity {
         Integer lengthOfNumber = getLengthOfNumber(newDisplay);
         String number = cutNumberFromEquasion(newDisplay, lengthOfNumber);
 
-        Double nbr = Math.log(Double.parseDouble(number));
+        Double nbr = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            nbr = func.apply(Double.parseDouble(number));
+        }
         number = nbr.toString();
+
         newDisplay = newDisplay.substring(0, newDisplay.length() - lengthOfNumber);
         newDisplay += number;
         return newDisplay;
