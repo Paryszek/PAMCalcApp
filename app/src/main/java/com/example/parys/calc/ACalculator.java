@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,17 +15,17 @@ import butterknife.OnClick;
 public class ACalculator extends AppCompatActivity {
     @BindView(R.id.equasion)
     TextView equasion;
+    CalcValidator calcValidator;
     String display = "";
     Boolean dotError = false;
     Boolean zeroError = false;
-    Boolean isBrackets = false;
-    Boolean isNegative = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_acalculator);
         ButterKnife.bind(this);
+        calcValidator = new CalcValidator();
     }
     @OnClick(R.id.bksp)
     public void OnBkspClick() {
@@ -40,21 +41,9 @@ public class ACalculator extends AppCompatActivity {
 
     @OnClick(R.id.x2)
     public void onX2Click() {
-        if(display.length() != 0 && !doesTextEndsWithOperator(display)) {
-            display = removeBrackets(display);
-            String number = display;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
-            Double nbr = Math.pow(Double.parseDouble(number), 2);
-            number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
-        }
+        if (display.length() < 1) return;
+        fillTheList("^2", "operator");
+        updateTextView(display);
     }
 
     @OnClick(R.id.xy)
@@ -62,74 +51,52 @@ public class ACalculator extends AppCompatActivity {
         if (display.length() < 1) return;
         fillTheList("^", "operator");
         updateTextView(display);
-//        display = removeBrackets(display);
-//        String power = getPower(display);
-//        String numberBeforePower = getNumber(display);
-//        String number = display;
-//        int lengthOfPower = 0;
-//        do {
-//            number = number.substring(0, number.length() - 1);
-//            lengthOfPower++;
-//        } while (!number.endsWith("^"));
-//        int lengthOfNumber = 0;
-//        do {
-//            number = number.substring(0, number.length() - 1);
-//            lengthOfNumber++;
-//        } while ((!doesTextEndsWithOperator(number) && !number.equals("")));
-//        Double nbr = Math.pow(Double.parseDouble(numberBeforePower), Double.parseDouble(power));
-//        if (isNegative && isBrackets) {
-//            display = display.substring(0, display.length() - lengthOfPower - lengthOfNumber - 2);
-//            display += nbr.toString();
-//        } else {
-//            display = display.substring(0, display.length() - lengthOfPower - lengthOfNumber);
-//            display += nbr.toString();
+    }
+
+//    private String getNumber(String diss) {
+//        String dis = diss;
+//        boolean getNumber = false;
+//        String number = "";
+//        while (dis.length() != 0) {
+//            if (dis.endsWith("^")) {
+//                getNumber = true;
+//            }
+//            dis = dis.substring(0, dis.length() - 1);
+//            if (getNumber) {
+//                if (dis.endsWith(")")) {
+//                    dis = removeBrackets(dis);
+//                    isBrackets = true;
+//                }
+//                if (dis.length() != 0) {
+//                    number = dis;
+//                    if (Double.parseDouble(number) < 0) {
+//                        isNegative = true;
+//                    }
+//                    break;
+//                }
+//            }
 //        }
-    }
-
-    private String getNumber(String diss) {
-        String dis = diss;
-        boolean getNumber = false;
-        String number = "";
-        while (dis.length() != 0) {
-            if (dis.endsWith("^")) {
-                getNumber = true;
-            }
-            dis = dis.substring(0, dis.length() - 1);
-            if (getNumber) {
-                if (dis.endsWith(")")) {
-                    dis = removeBrackets(dis);
-                    isBrackets = true;
-                }
-                if (dis.length() != 0) {
-                    number = dis;
-                    if (Double.parseDouble(number) < 0) {
-                        isNegative = true;
-                    }
-                    break;
-                }
-            }
-        }
-        return number;
-    }
-
-    private String getPower(String dis) {
-        String power = "";
-        while (dis.length() != 0) {
-            if(dis.endsWith("^"))
-                break;
-            power += dis.substring(dis.length() - 1, dis.length());
-            dis = dis.substring(0, dis.length() - 1);
-        }
-        power = reverseString(power);
-        return power;
-    }
-
-    private String reverseString(String input) {
-        StringBuilder output = new StringBuilder();
-        output.append(input);
-        output = output.reverse();
-        return output.toString();
-    }
+//        return number;
+//    }
+//
+//    private String getPower(String dis) {
+//        String power = "";
+//        while (dis.length() != 0) {
+//            if(dis.endsWith("^"))
+//                break;
+//            power += dis.substring(dis.length() - 1, dis.length());
+//            dis = dis.substring(0, dis.length() - 1);
+//        }
+//        power = reverseString(power);
+//        return power;
+//    }
+//
+//    private String reverseString(String input) {
+//        StringBuilder output = new StringBuilder();
+//        output.append(input);
+//        output = output.reverse();
+//        return output.toString();
+//    }
 
     @OnClick(R.id.sin)
     public void onSinClick() {
@@ -170,14 +137,14 @@ public class ACalculator extends AppCompatActivity {
         }
     }
 
-    private String removeBrackets(String dis) {
-        if (dis.endsWith(")")) {
-            dis = dis.substring(0, dis.length() - 1);
-            String text = dis;
+    private String removeBrackets(String equasion) {
+        if (equasion.endsWith(")")) {
+            equasion = equasion.substring(0, equasion.length() - 1);
+            String text = equasion;
             for (int i = text.length(); i > 0; i--) {
                 if (text.endsWith("(")) {
-                    text = dis.substring(0, i - 1);
-                    text += dis.substring(i);
+                    text = equasion.substring(0, i - 1);
+                    text += equasion.substring(i);
                     break;
                 } else {
                     text = text.substring(0, text.length() - 1);
@@ -185,46 +152,63 @@ public class ACalculator extends AppCompatActivity {
             }
             return text;
         }
-        return dis;
+        return equasion;
     }
 
 
     @OnClick(R.id.tan)
     public void onTanClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display)) {
-            display = removeBrackets(display);
-            String number = display;
+            String newDisplay = removeBrackets(display);
+            String number = newDisplay;
             int lengthOfNumbers = 0;
             do {
                 number = number.substring(0, number.length() - 1);
                 lengthOfNumbers++;
             } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
+            number = newDisplay.substring(newDisplay.length() - lengthOfNumbers);
             Double nbr = Math.tan(Double.parseDouble(number));
             number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
+            newDisplay = newDisplay.substring(0, newDisplay.length() - lengthOfNumbers);
+            newDisplay += number;
+            updateTextView(newDisplay);
         }
     }
 
     @OnClick(R.id.ln)
     public void onLnClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display) && isPositive(display)) {
-            display = removeBrackets(display);
-            String number = display;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
-            Double nbr = Math.log(Double.parseDouble(number));
-            number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
+            String newDisplay = executeMathFunctionOnValue(display, Math::log);
+            updateTextView(newDisplay);
         }
+    }
+
+    private String executeMathFunctionOnValue(String display, Function<Double, Double> func) {
+        String newDisplay = removeBrackets(display);
+        Integer lengthOfNumber = getLengthOfNumber(newDisplay);
+        String number = cutNumberFromEquasion(newDisplay, lengthOfNumber);
+
+        Double nbr = Math.log(Double.parseDouble(number));
+        number = nbr.toString();
+        newDisplay = newDisplay.substring(0, newDisplay.length() - lengthOfNumber);
+        newDisplay += number;
+        return newDisplay;
+    }
+
+    private Integer getLengthOfNumber(String display) {
+        Integer lengthOfNumber = 0;
+        String temp = display;
+        do {
+            temp = temp.substring(0, temp.length() - 1);
+            lengthOfNumber++;
+        } while ((!doesTextEndsWithOperator(temp) && !temp.equals("")) || temp.endsWith("."));
+        return lengthOfNumber;
+    }
+
+    private String cutNumberFromEquasion(String equasion, Integer lengthOfNumber) {
+        String result = equasion;
+        result = display.substring(display.length() - lengthOfNumber);
+        return result;
     }
 
     @OnClick(R.id.sqrt)
@@ -485,25 +469,14 @@ public class ACalculator extends AppCompatActivity {
 
     @OnClick(R.id.equal)
     public void onEqualClick() {
-        CalcValidator calcValidator = new CalcValidator();
         ReversePolishNotation rpn = new ReversePolishNotation();
-
-//        if (!display.contains("Dzielenie przez zero!") && !zeroError && display.length() != 0 && !display.startsWith("+")) {
-//            if (!doesTextEndsWithOperator(display) && !display.contains("^")) {
-
-//        if (display.contains("^")) return;
 
         if (!calcValidator.Validate(display)) return;
 
         display = rpn.compute(display);
         dotError = true;
-        if (display.contains("Infinity")) {
-            display = "Dzielenie przez zero!";
-            zeroError = true;
-        }
         updateTextView(display);
-//            }
-//        }
+
     }
 
     boolean doesTextEndsWithOperator(String text) {
