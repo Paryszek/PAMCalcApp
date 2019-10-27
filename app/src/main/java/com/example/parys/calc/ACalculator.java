@@ -101,39 +101,16 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.sin)
     public void onSinClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display)) {
-            display = removeBrackets(display);
-            String number = display;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
-            Double nbr = Math.sin(Double.parseDouble(number));
-            number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
+            String newDisplay = executeMathFunctionOnValue(display, Math::sin);
+            updateTextView(newDisplay);
         }
     }
 
     @OnClick(R.id.cos)
     public void onCosClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display)) {
-            display = removeBrackets(display);
-            String number = display;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
-
-            Double nbr = Math.cos(Double.parseDouble(number));
-            number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
+            String newDisplay = executeMathFunctionOnValue(display, Math::cos);
+            updateTextView(newDisplay);
         }
     }
 
@@ -207,18 +184,8 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.sqrt)
     public void onSqrtClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display) && isPositive(display)) {
-            String number = display;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
-            Double nbr = Math.sqrt(Double.parseDouble(number));
-            number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
+            String newDisplay = executeMathFunctionOnValue(display, Math::sqrt);
+            updateTextView(newDisplay);
         }
     }
 
@@ -239,19 +206,8 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.log)
     public void onLogClick() {
         if(display.length() != 0 && !doesTextEndsWithOperator(display) && isPositive(display)) {
-            display = removeBrackets(display);
-            String number = display;
-            int lengthOfNumbers = 0;
-            do {
-                number = number.substring(0, number.length() - 1);
-                lengthOfNumbers++;
-            } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-            number = display.substring(display.length() - lengthOfNumbers);
-            Double nbr = Math.log10(Double.parseDouble(number));
-            number = nbr.toString();
-            display = display.substring(0, display.length() - lengthOfNumbers);
-            display += number;
-            updateTextView(display);
+            String newDisplay = executeMathFunctionOnValue(display, Math::log);
+            updateTextView(newDisplay);
         }
     }
 
@@ -457,7 +413,8 @@ public class ACalculator extends AppCompatActivity {
     }
 
     private void updateTextView(String text) {
-        equasion.setText(text);
+        display = text;
+        equasion.setText(display);
     }
 
     @OnClick(R.id.equal)
