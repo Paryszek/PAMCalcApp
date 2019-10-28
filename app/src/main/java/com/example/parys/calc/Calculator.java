@@ -4,8 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.parys.calc.services.CalcValidator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,43 +13,35 @@ import butterknife.OnClick;
 public class Calculator extends AppCompatActivity {
     @BindView(R.id.equasion)
     TextView equasion;
+
     String display = "";
-    Boolean dotError = false;
-    Boolean zeroError = false;
+    CalcValidator calcValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
         ButterKnife.bind(this);
+        calcValidator = new CalcValidator();
     }
+
     @OnClick(R.id.bksp)
     public void OnBkspClick() {
-        if(display.endsWith(".")) {
-            dotError = false;
-        }
-        if (display.length() == 0) {
-            zeroError = false;
-        } else {
-            display = display.substring(0, display.length() - 1);
-        }
-
-        updateTextView(display);
+        updateTextView(display.substring(0, display.length() - 1));
     }
 
     @OnClick(R.id.c)
     public void onCClick() {
-        dotError = false;
-        zeroError = false;
-        display = "";
-        updateTextView(display);
+        updateTextView("");
     }
+
     @OnClick(R.id.round)
     public void onRoundClick() {
-        if (!doesTextEndsWithOperator(display) && display.length() != 0 && !zeroError) {
-            display = changeTheOperator(display);
-            updateTextView(display);
-        }
+        if (!calcValidator.Validate(display)) return;
+
+        String newDisplay = changeTheOperator(display);
+        updateTextView(newDisplay);
+
     }
 
     String changeTheOperator(String text) {
@@ -123,136 +114,101 @@ public class Calculator extends AppCompatActivity {
         return amount;
     }
 
+    private boolean doesTextEndsWithOperator(String text) {
+        return (text.endsWith("*") || text.endsWith("/") || text.endsWith("-") || text.endsWith("+") || text.endsWith("."));
+    }
+
+
     @OnClick(R.id.zero)
     public void onZeroClick() {
-        fillTheList("0", "number");
+        passInput("0", "number");
     }
 
     @OnClick(R.id.one)
     public void onOneClick() {
-        fillTheList("1", "number");
+        passInput("1", "number");
     }
 
     @OnClick(R.id.two)
     public void onTwoClick() {
-        fillTheList("2", "number");
+        passInput("2", "number");
     }
 
     @OnClick(R.id.three)
     public void onThreeClick() {
-        fillTheList("3", "number");
+        passInput("3", "number");
     }
 
     @OnClick(R.id.four)
     public void onFourClick() {
-        fillTheList("4", "number");
+        passInput("4", "number");
     }
 
     @OnClick(R.id.five)
     public void onFiveClick() {
-        fillTheList("5", "number");
+        passInput("5", "number");
     }
 
     @OnClick(R.id.six)
     public void onSixClick() {
-        fillTheList("6", "number");
+        passInput("6", "number");
     }
 
     @OnClick(R.id.seven)
     public void onSevenClick() {
-        fillTheList("7", "number");
+        passInput("7", "number");
     }
 
     @OnClick(R.id.eight)
     public void onEightClick() {
-        fillTheList("8", "number");
+        passInput("8", "number");
     }
 
     @OnClick(R.id.nine)
     public void onNineClick() {
-        fillTheList("9", "number");
+        passInput("9", "number");
     }
 
     @OnClick(R.id.plus)
     public void onPlusClick() {
-        fillTheList("+", "operator");
+        passInput("+", "operator");
     }
 
     @OnClick(R.id.minus)
     public void onMinusClick() {
-        fillTheList("-", "operator");
+        passInput("-", "operator");
     }
 
     @OnClick(R.id.divide)
     public void onDivideClick() {
-        fillTheList("/", "operator");
+        passInput("/", "operator");
     }
 
     @OnClick(R.id.multi)
     public void onMultiClick() {
-        fillTheList("*", "operator");
+        passInput("*", "operator");
     }
 
     @OnClick(R.id.dot)
-    public void onDotClick() { fillTheList(".", "operator"); }
+    public void onDotClick() { passInput(".", "operator"); }
 
-    private void fillTheList(String value, String type) {
-        clearErrors(value, type);
-        if (isDotError(value) || zeroError) {
-            value = "";
-        }
-        if (display.length() != 0 || !type.equals("operator")) {
-            if (!doesTextEndsWithOperator(display) || type.equals("number")) {
-                setErrors(value);
-                if (value.equals(".")) {
-                    dotError = true;
-                }
-                display += value;
-                updateTextView(display);
-            }
-        }
-    }
-
-    private void setErrors(String value) {
-        if (value.equals(".")) {
-            dotError = true;
-        }
-    }
-
-    private boolean isDotError(String value) {
-        return dotError && value.equals(".");
-    }
-
-    private void clearErrors(String value, String type) {
-        if (dotError && type.equals("operator") && !value.equals(".")) {
-            dotError = false;
-        }
+    private void passInput(String value, String type) {
+        String newDisplay = display + value;
+        updateTextView(newDisplay);
     }
 
     private void updateTextView(String text) {
-        equasion.setText(text);
+        display = text;
+        equasion.setText(display);
     }
 
     @OnClick(R.id.equal)
     public void onEqualClick() {
         ReversePolishNotation rpn = new ReversePolishNotation();
-        if (!display.contains("Dzielenie przez zero!") && !zeroError && display.length() != 0 && !display.startsWith("+")) {
-            if (!doesTextEndsWithOperator(display)) {
-                display = rpn.compute(display);
-                dotError = true;
-                if (display.contains("Infinity")) {
-                    display = "Dzielenie przez zero!";
-                    zeroError = true;
-                }
-                updateTextView(display);
-            }
-        }
+
+        if (!calcValidator.Validate(display)) return;
+
+        String newDisplay = rpn.compute(display);
+        updateTextView(newDisplay);
     }
-
-
-    boolean doesTextEndsWithOperator(String text) {
-        return (text.endsWith("*") || text.endsWith("/") || text.endsWith("-") || text.endsWith("+") || text.endsWith("."));
-    }
-
-
 }
