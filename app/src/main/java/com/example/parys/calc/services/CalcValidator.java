@@ -1,4 +1,4 @@
-package com.example.parys.calc;
+package com.example.parys.calc.services;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
