@@ -37,85 +37,22 @@ public class Calculator extends AppCompatActivity {
 
     @OnClick(R.id.round)
     public void onRoundClick() {
-        if (!calcValidator.Validate(display)) return;
-
-        String newDisplay = changeTheOperator(display);
-        updateTextView(newDisplay);
-
-    }
-
-    String changeTheOperator(String text) {
-        String number = text;
-        int amountOfOperators = countTheOperators(text);
-        int amountOfSeperateNumbers = countTheNumbers(text);
-        int lengthOfNumbers = 0;
-        do {
-            number = number.substring(0, number.length() - 1);
-            lengthOfNumbers++;
-        } while ((!doesTextEndsWithOperator(number) && !number.equals("")) || number.endsWith("."));
-        if (number.length() == 0) {
-            number += "(-";
-            number += text;
-            number += ")";
+        String newDisplay = display;
+        if (calcValidator.IsOperator(newDisplay)) {
+            Integer plusPos = newDisplay.indexOf("+");
+            Integer minusPos = newDisplay.indexOf("-");
+            newDisplay =  minusPos != 0 ? (
+                    plusPos > minusPos ?
+                            ((plusPos > 0 ?
+                                    newDisplay.substring(0, plusPos) : "") + newDisplay.substring(plusPos).replaceFirst("\\+", "-"))
+                            :
+                            ((minusPos > 0 ?
+                                    newDisplay.substring(0, minusPos) : "") + newDisplay.substring(minusPos).replaceFirst("-", "+")))
+                    : newDisplay.substring(1);
         } else {
-            String operator = number.substring(number.length() - 1, number.length());
-            if (operator.equals("+")) {
-                number = text.substring(0, text.length() - lengthOfNumbers - 1);
-                number += "-";
-                number += text.substring(text.length() - lengthOfNumbers);
-            } else if (operator.equals("-")) {
-                if (amountOfOperators > 1 && amountOfSeperateNumbers > 1) {
-                    number = text.substring(0, text.length() - lengthOfNumbers - 1);
-                    number += "+";
-                    number += text.substring(text.length() - lengthOfNumbers);
-                } else {
-                    if (text.startsWith("(")) {
-                        number = text.substring(2, text.length() - 1);
-                    } else {
-                        if (amountOfSeperateNumbers >= 1) {
-                            number = text.substring(0, text.length() - lengthOfNumbers - 1);
-                            number += "+";
-                            number += text.substring(text.length() - lengthOfNumbers);
-                        } else {
-                            number = text.substring(1, text.length());
-                        }
-                    }
-                }
-            } else {
-                number = text;
-            }
+            newDisplay = "-" + newDisplay;
         }
-        return number;
-    }
-
-    private int countTheNumbers(String text) {
-        String temp = text;
-        int amount = 0;
-        do {
-            temp = temp.substring(0, temp.length() - 1);
-            if (doesTextEndsWithOperator(temp) || temp.length() == 0) {
-                if (!temp.endsWith(".") && temp.length() != 0) {
-                    amount++;
-                }
-            }
-        } while (temp.length() != 0);
-        return amount;
-    }
-
-    private int countTheOperators(String text) {
-        int amount = 0;
-        String temp = text;
-        do {
-            if (doesTextEndsWithOperator(temp) && !temp.endsWith(".")) {
-                amount++;
-            }
-            temp = temp.substring(0,temp.length() - 1);
-        } while (temp.length() != 0);
-        return amount;
-    }
-
-    private boolean doesTextEndsWithOperator(String text) {
-        return (text.endsWith("*") || text.endsWith("/") || text.endsWith("-") || text.endsWith("+") || text.endsWith("."));
+        updateTextView(newDisplay);
     }
 
 
