@@ -6,8 +6,7 @@ import android.widget.TextView;
 
 import com.example.parys.calc.services.CalcValidator;
 import com.example.parys.calc.services.CalculatorHelper;
-
-import java.util.regex.Pattern;
+import com.example.parys.calc.services.ReversePolishNotation;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -125,21 +124,37 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.round)
     public void onRoundClick() {
         String newDisplay = display;
-        if (calcValidator.IsOperator(newDisplay)) {
-            Integer plusPos = newDisplay.indexOf("+");
-            Integer minusPos = newDisplay.indexOf("-");
-            newDisplay =  minusPos != 0 ? (
-                    plusPos > minusPos ?
-                        ((plusPos > 0 ?
-                                newDisplay.substring(0, plusPos) : "") + newDisplay.substring(plusPos).replaceFirst("\\+", "-"))
-                        :
-                        ((minusPos > 0 ?
-                                newDisplay.substring(0, minusPos) : "") + newDisplay.substring(minusPos).replaceFirst("-", "+")))
-                : newDisplay.substring(1);
-        } else {
+        Integer plusPos = newDisplay.indexOf("+");
+        Integer minusPos = newDisplay.indexOf("-");
+        if (!calcValidator.IsOperator(newDisplay) || (plusPos == -1 && minusPos == -1)) {
             newDisplay = "-" + newDisplay;
+            updateTextView(newDisplay);
+            return;
         }
-        updateTextView(newDisplay);
+
+        if (calcValidator.CountOperators(newDisplay) == 1 && plusPos != -1) {
+            newDisplay = newDisplay.replaceFirst("\\+", "-");
+            updateTextView(newDisplay);
+            return;
+        }
+
+        if (calcValidator.CountOperators(newDisplay) == 1 && minusPos != -1) {
+            newDisplay = newDisplay.replaceFirst("-", "+");
+            updateTextView(newDisplay);
+            return;
+        }
+
+        if (calcValidator.CountOperators(newDisplay) > 1 && (plusPos > -1 || minusPos > -1)) {
+            newDisplay = new StringBuilder(newDisplay).reverse().toString();
+            plusPos = newDisplay.indexOf("+");
+            minusPos = newDisplay.indexOf("-");
+            if ((plusPos >  minusPos && minusPos > -1) || (plusPos == -1 && minusPos > -1)) {
+                newDisplay = (minusPos > 0 ? newDisplay.substring(0, minusPos) : "") + newDisplay.substring(minusPos).replaceFirst("-", "+");
+            } else if ((minusPos > plusPos && plusPos > -1) || (minusPos == -1 && plusPos > -1)) {
+                newDisplay = (plusPos > 0 ? newDisplay.substring(0, plusPos) : "") + newDisplay.substring(plusPos).replaceFirst("\\+", "-");
+            }
+            updateTextView(new StringBuilder(newDisplay).reverse().toString());
+        }
     }
 
     @OnClick(R.id.zero)

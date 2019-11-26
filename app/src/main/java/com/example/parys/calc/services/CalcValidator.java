@@ -27,4 +27,12 @@ public class CalcValidator {
         return operatorMatcher.matches();
     }
 
+    public int CountOperators(String value) {
+        Matcher operatorMatcher = operatorPattern.matcher(value.toLowerCase());
+
+        int count = 0;
+        while (operatorMatcher.find())
+            count++;
+        return count;
+    }
 }
