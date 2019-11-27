@@ -46,7 +46,6 @@ public class ReversePolishNotation {
             return null;
         String res = "";
         int len = exp.length();
-        boolean bracket = false;
         Stack<Character> operator = new Stack<Character>();
         Stack<String> reversePolish = new Stack<String>();
         operator.push('#');
@@ -63,24 +62,10 @@ public class ReversePolishNotation {
                     num += exp.charAt(i++);
                     prev = exp.charAt(i - 1);
                 }
-                if (bracket && operator.peek() == '-') {
-                    reversePolish.push(Character.toString(operator.pop()) + num);
-                } else {
-                    reversePolish.push(num);
-                }
+                reversePolish.push(num);
             } else if (isOperator(exp.charAt(i))) {
                 char op = exp.charAt(i);
                 switch (op) {
-                    case '(':
-                        operator.push(op);
-                        bracket = true;
-                        break;
-                    case ')':
-                        while (operator.peek() != '(')
-                            reversePolish.push(Character.toString(operator.pop()));
-                        operator.pop();
-                        bracket = false;
-                        break;
                     case '+':
                     case '-':
                         if (operator.peek() == '(')

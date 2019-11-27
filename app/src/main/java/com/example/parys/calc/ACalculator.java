@@ -139,7 +139,7 @@ public class ACalculator extends AppCompatActivity {
         }
 
         if (calcValidator.CountOperators(newDisplay) == 1 && minusPos != -1) {
-            newDisplay = newDisplay.replaceFirst("-", "+");
+            newDisplay = newDisplay.replaceFirst("-", "");
             updateTextView(newDisplay);
             return;
         }
