@@ -16,9 +16,8 @@ public class ACalculator extends AppCompatActivity {
     @BindView(R.id.equasion)
     TextView equasion;
     CalcValidator calcValidator;
+    Boolean lastDot = false;
     String display = "";
-    Boolean dotError = false;
-    Boolean zeroError = false;
     private CalculatorHelper calcHelper;
 
     @Override
@@ -44,21 +43,21 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.x2)
     public void onX2Click() {
         if (display.length() < 1) return;
-        passInput("^2", "operator");
+        passInput("^2");
         updateTextView(display);
     }
 
     @OnClick(R.id.xy)
     public void onXYClick() {
         if (display.length() < 1) return;
-        passInput("^", "operator");
+        passInput("^");
         updateTextView(display);
     }
 
     @OnClick(R.id.sin)
     public void onSinClick() {
         if(display.length() != 0 && !calcHelper.DoesEquasionEndWithOperator(display)) {
-            String newDisplay = calcHelper.ExecuteMathFunctionOnValue(display, Math::sin);
+            String newDisplay = calcHelper.ExecuteMathTrigonometryFunctionOnValue(display, Math::sin);
             updateTextView(newDisplay);
         }
     }
@@ -66,18 +65,15 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.cos)
     public void onCosClick() {
         if(display.length() != 0 && !calcHelper.DoesEquasionEndWithOperator(display)) {
-            String newDisplay = calcHelper.ExecuteMathFunctionOnValue(display, Math::cos);
+            String newDisplay = calcHelper.ExecuteMathTrigonometryFunctionOnValue(display, Math::cos);
             updateTextView(newDisplay);
         }
     }
 
-
-
-
     @OnClick(R.id.tan)
     public void onTanClick() {
         if(display.length() != 0 && !calcHelper.DoesEquasionEndWithOperator(display)) {
-            String newDisplay = calcHelper.ExecuteMathFunctionOnValue(display, Math::tan);
+            String newDisplay = calcHelper.ExecuteMathTrigonometryFunctionOnValue(display, Math::tan);
             updateTextView(newDisplay);
         }
     }
@@ -115,11 +111,10 @@ public class ACalculator extends AppCompatActivity {
     @OnClick(R.id.log)
     public void onLogClick() {
         if(display.length() != 0 && !calcHelper.DoesEquasionEndWithOperator(display) && isPositive(display)) {
-            String newDisplay = calcHelper.ExecuteMathFunctionOnValue(display, Math::log);
+            String newDisplay = calcHelper.ExecuteMathFunctionOnValue(display, Math::log10);
             updateTextView(newDisplay);
         }
     }
-
 
     @OnClick(R.id.round)
     public void onRoundClick() {
@@ -159,112 +154,82 @@ public class ACalculator extends AppCompatActivity {
 
     @OnClick(R.id.zero)
     public void onZeroClick() {
-        passInput("0", "number");
+        passInput("0");
     }
 
     @OnClick(R.id.one)
     public void onOneClick() {
-        passInput("1", "number");
+        passInput("1");
     }
 
     @OnClick(R.id.two)
     public void onTwoClick() {
-        passInput("2", "number");
+        passInput("2");
     }
 
     @OnClick(R.id.three)
     public void onThreeClick() {
-        passInput("3", "number");
+        passInput("3");
     }
 
     @OnClick(R.id.four)
     public void onFourClick() {
-        passInput("4", "number");
+        passInput("4");
     }
 
     @OnClick(R.id.five)
     public void onFiveClick() {
-        passInput("5", "number");
+        passInput("5");
     }
 
     @OnClick(R.id.six)
     public void onSixClick() {
-        passInput("6", "number");
+        passInput("6");
     }
 
     @OnClick(R.id.seven)
     public void onSevenClick() {
-        passInput("7", "number");
+        passInput("7");
     }
 
     @OnClick(R.id.eight)
     public void onEightClick() {
-        passInput("8", "number");
+        passInput("8");
     }
 
     @OnClick(R.id.nine)
     public void onNineClick() {
-        passInput("9", "number");
+        passInput("9");
     }
 
     @OnClick(R.id.plus)
     public void onPlusClick() {
-        passInput("+", "operator");
+        passInput("+");
     }
 
     @OnClick(R.id.minus)
     public void onMinusClick() {
-        passInput("-", "operator");
+        passInput("-");
     }
 
     @OnClick(R.id.divide)
     public void onDivideClick() {
-        passInput("/", "operator");
+        passInput("/");
     }
 
     @OnClick(R.id.multi)
     public void onMultiClick() {
-        passInput("*", "operator");
+        passInput("*");
     }
 
     @OnClick(R.id.dot)
-    public void onDotClick() {
-        if (!display.endsWith(")") && !display.contains("^")) {
-            passInput(".", "operator");
-        }
-    }
+    public void onDotClick() { passInput("."); }
 
-    private void passInput(String value, String type) {
-        clearErrors(value, type);
-        if (isDotError(value) || zeroError) {
-            value = "";
-        }
-        if (display.length() != 0 || !type.equals("operator")) {
-            if (!calcHelper.DoesEquasionEndWithOperator(display) || type.equals("number")) {
-                setErrors(value);
-                if (value.equals(".")) {
-                    dotError = true;
-                }
-                display += value;
-                updateTextView(display);
-            }
-        }
-    }
-
-    private void setErrors(String value) {
-        if (value.equals(".")) {
-            dotError = true;
-        }
-    }
-
-    private boolean isDotError(String value) {
-        return dotError && value.equals(".");
-    }
-
-    private void clearErrors(String value, String type) {
-        if (dotError && type.equals("operator") && !value.equals(".")) {
-            dotError = false;
-        }
+    private void passInput(String value) {
+        if (lastDot && value.equals(".")) return;
+        lastDot = value.equals(".");
+        String newDisplay = display + value;
+        updateTextView(newDisplay);
     }
 
     private void updateTextView(String text) {
@@ -279,7 +244,6 @@ public class ACalculator extends AppCompatActivity {
         if (!calcValidator.Validate(display)) return;
 
         display = rpn.compute(display);
-        dotError = true;
         updateTextView(display);
 
     }

@@ -20,6 +20,12 @@ public class CalculatorHelper {
         return newDisplay;
     }
 
+    public String ExecuteMathTrigonometryFunctionOnValue(String display, Function<Double, Double> func) {
+        String newDisplay = ExecuteMathFunctionOnValue(display, Math::toRadians);
+        newDisplay = ExecuteMathFunctionOnValue(newDisplay, func);
+        return newDisplay;
+    }
+
     public boolean DoesEquasionEndWithOperator(String text) {
         return (text.endsWith("*") || text.endsWith("/") || text.endsWith("-") || text.endsWith("+") || text.endsWith(".") || text.endsWith("E-") || text.endsWith("E"));
     }

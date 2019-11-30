@@ -16,6 +16,7 @@ public class Calculator extends AppCompatActivity {
     TextView equasion;
 
     String display = "";
+    Boolean lastDot = false;
     CalcValidator calcValidator;
 
     @Override
@@ -54,7 +55,7 @@ public class Calculator extends AppCompatActivity {
         }
 
         if (calcValidator.CountOperators(newDisplay) == 1 && minusPos != -1) {
-            newDisplay = newDisplay.replaceFirst("-", "+");
+            newDisplay = newDisplay.replaceFirst("-", "");
             updateTextView(newDisplay);
             return;
         }
@@ -72,81 +73,80 @@ public class Calculator extends AppCompatActivity {
         }
     }
 
-
     @OnClick(R.id.zero)
-    public void onZeroClick() {
-        passInput("0", "number");
-    }
+    public void onZeroClick() { passInput("0"); }
 
     @OnClick(R.id.one)
     public void onOneClick() {
-        passInput("1", "number");
+        passInput("1");
     }
 
     @OnClick(R.id.two)
     public void onTwoClick() {
-        passInput("2", "number");
+        passInput("2");
     }
 
     @OnClick(R.id.three)
     public void onThreeClick() {
-        passInput("3", "number");
+        passInput("3");
     }
 
     @OnClick(R.id.four)
     public void onFourClick() {
-        passInput("4", "number");
+        passInput("4");
     }
 
     @OnClick(R.id.five)
     public void onFiveClick() {
-        passInput("5", "number");
+        passInput("5");
     }
 
     @OnClick(R.id.six)
     public void onSixClick() {
-        passInput("6", "number");
+        passInput("6");
     }
 
     @OnClick(R.id.seven)
     public void onSevenClick() {
-        passInput("7", "number");
+        passInput("7");
     }
 
     @OnClick(R.id.eight)
     public void onEightClick() {
-        passInput("8", "number");
+        passInput("8");
     }
 
     @OnClick(R.id.nine)
     public void onNineClick() {
-        passInput("9", "number");
+        passInput("9");
     }
 
     @OnClick(R.id.plus)
     public void onPlusClick() {
-        passInput("+", "operator");
+        passInput("+");
     }
 
     @OnClick(R.id.minus)
     public void onMinusClick() {
-        passInput("-", "operator");
+        passInput("-");
     }
 
     @OnClick(R.id.divide)
     public void onDivideClick() {
-        passInput("/", "operator");
+        passInput("/");
     }
 
     @OnClick(R.id.multi)
     public void onMultiClick() {
-        passInput("*", "operator");
+        passInput("*");
     }
 
     @OnClick(R.id.dot)
-    public void onDotClick() { passInput(".", "operator"); }
+    public void onDotClick() { passInput("."); }
 
-    private void passInput(String value, String type) {
+    private void passInput(String value) {
+        if (lastDot && value.equals(".")) return;
+        lastDot = value.equals(".");
         String newDisplay = display + value;
         updateTextView(newDisplay);
     }
